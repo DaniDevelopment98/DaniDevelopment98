@@ -1,0 +1,41 @@
+--Muestra cada uno de las compras por clientes
+
+SELECT
+  Orders.OrderID
+ ,Orders.CustomerID
+ ,Customers.CompanyName AS Cliente
+ ,Products.ProductName AS Producto
+ ,[Order Details].UnitPrice AS Precio
+ ,[Order Details].Quantity AS Cantidad
+ ,[Order Details].Discount AS descuento
+  ,Orders.Freight 'Flete'
+ 
+
+FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Customers
+  ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN dbo.Products
+  ON [Order Details].ProductID = Products.ProductID
+ group by freight,Orders.OrderID,Orders.CustomerID,CompanyName,ProductName,[Order Details].UnitPrice,Quantity,Discount
+
+
+
+
+
+--Muestra las ganancias generales por flete y ventas, y hace la suma total
+ SELECT
+ sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) AS Tot1 
+,(select sum(freight) 'Total de Fletes' from orders) AS Tot2
+, (sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) + (select sum(freight) 'Total de Fletes' from orders) ) AS TotalCliente
+
+
+FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Customers
+  ON Orders.CustomerID = Customers.CustomerID
+      
+
+
