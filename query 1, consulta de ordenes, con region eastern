@@ -1,0 +1,32 @@
+SELECT
+  Employees.EmployeeID
+ ,Orders.OrderID
+ ,Orders.EmployeeID
+ ,Orders.OrderDate
+ ,Orders.RequiredDate
+ ,Orders.ShipVia
+ ,Orders.Freight
+ ,Orders.ShipName
+ ,Orders.ShipAddress
+ ,Orders.ShipCity
+ ,Orders.ShipRegion
+ ,Orders.ShipPostalCode
+ ,Region.RegionDescription
+ ,Categories.CategoryName
+FROM dbo.EmployeeTerritories
+INNER JOIN dbo.Employees
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+INNER JOIN dbo.Region
+  ON Territories.RegionID = Region.RegionID
+INNER JOIN dbo.Orders
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.[Order Details]
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Products
+  ON [Order Details].ProductID = Products.ProductID
+INNER JOIN dbo.Categories
+  ON Products.CategoryID = Categories.CategoryID
+WHERE Region.RegionID = 1
+AND Products.CategoryID = 8
