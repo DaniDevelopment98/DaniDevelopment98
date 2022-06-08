@@ -1,41 +1,39 @@
---Muestra cada uno de las compras por clientes
 
+--query para traer ganancias por clientes
 SELECT
-  Orders.OrderID
- ,Orders.CustomerID
- ,Customers.CompanyName AS Cliente
- ,Products.ProductName AS Producto
- ,[Order Details].UnitPrice AS Precio
- ,[Order Details].Quantity AS Cantidad
- ,[Order Details].Discount AS descuento
-  ,Orders.Freight 'Flete'
- 
+CustomerID AS Cliente,
+ sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) AS TotalVentas
+ ,
+( SELECT SUM(Freight) FROM Orders WHERE CustomerID LIKE '%ALF%' ) AS TotalFlete
+,
+(sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) + ( SELECT SUM(Freight) FROM Orders WHERE CustomerID LIKE '%ALF%' ) ) as TotalVentas
 
 FROM dbo.[Order Details]
 INNER JOIN dbo.Orders
   ON [Order Details].OrderID = Orders.OrderID
-INNER JOIN dbo.Customers
-  ON Orders.CustomerID = Customers.CustomerID
-INNER JOIN dbo.Products
-  ON [Order Details].ProductID = Products.ProductID
- group by freight,Orders.OrderID,Orders.CustomerID,CompanyName,ProductName,[Order Details].UnitPrice,Quantity,Discount
+  WHERE CustomerID LIKE '%alf%'
+GROUP BY CustomerID 
 
 
 
-
-
---Muestra las ganancias generales por flete y ventas, y hace la suma total
- SELECT
- sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) AS Tot1 
-,(select sum(freight) 'Total de Fletes' from orders) AS Tot2
-, (sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) + (select sum(freight) 'Total de Fletes' from orders) ) AS TotalCliente
-
+--query para hacer lel procedimiento almacenado y traerlos por cliente
+ALTER PROCEDURE SP_GanCli
+@Cli AS NVARCHAR(5)
+AS
+BEGIN
+SELECT
+CustomerID AS Cliente,
+ sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) AS Total
+ ,
+( SELECT SUM(Freight) FROM Orders WHERE CustomerID LIKE @Cli ) AS TotalFlete
+,
+(sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) + ( SELECT SUM(Freight) FROM Orders WHERE CustomerID LIKE @Cli ) ) as TotalVentas
 
 FROM dbo.[Order Details]
 INNER JOIN dbo.Orders
   ON [Order Details].OrderID = Orders.OrderID
-INNER JOIN dbo.Customers
-  ON Orders.CustomerID = Customers.CustomerID
-      
-
+  WHERE CustomerID LIKE @Cli
+GROUP BY CustomerID 
+END 
+EXEC SP_GanCli 'ALFKY'
 
