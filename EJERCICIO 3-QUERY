@@ -1,0 +1,32 @@
+alter PROCEDURE SP_GanEmp
+@emp as nvarchar(10)
+as
+begin
+
+SELECT Employees.EmployeeID,(LastName+ ' ' + FirstName) AS EMPLEADO 
+,
+SUM ((UnitPrice -Discount ) *Quantity ) AS TOTALVENTAS,
+
+(SELECT(SUM(Freight))AS FLETE FROM [Order Details]INNER JOIN Orders
+ON [Order Details].OrderID=Orders.OrderID INNER JOIN Employees
+ON Orders.EmployeeID=Employees.EmployeeID
+WHERE FirstName LIKE @emp)AS FLETE
+,
+
+(sum (([Order Details].UnitPrice - (Discount)) * [Order Details].Quantity) + 
+( SELECT(SUM(Freight))AS FLETE FROM [Order Details]INNER JOIN Orders
+ON [Order Details].OrderID=Orders.OrderID INNER JOIN Employees
+ON Orders.EmployeeID=Employees.EmployeeID
+WHERE FirstName LIKE @emp ) ) as TotalVentas
+
+FROM [Order Details]INNER JOIN Orders
+ON [Order Details].OrderID=Orders.OrderID INNER JOIN Employees
+ON Orders.EmployeeID=Employees.EmployeeID
+
+WHERE FirstName LIKE @emp
+GROUP BY Employees.EmployeeID,LastName,FirstName
+ORDER BY EmployeeID
+
+end
+
+exec SP_GanEmp 'ANDREW'
