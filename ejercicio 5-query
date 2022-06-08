@@ -1,0 +1,33 @@
+-- query que ejecuta una busqueda de ganancias por producto mediante procedimiento almacenado (si funciona el execute)
+  create procedure SP_GanPro
+  @prod nvarchar(20)
+  as
+  begin
+  SELECT
+  Products.ProductName,
+  SUM (([Order Details]. UnitPrice -Discount ) *Quantity ) AS SUBTOTAL
+  ,
+
+  
+(SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+  WHERE ProductName LIKE @prod)AS FLETE
+
+  ,
+
+  sum (([Order Details]. UnitPrice -Discount ) *Quantity ) +
+  (SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+  WHERE ProductName LIKE @prod) as VentasTotales
+
+FROM dbo.[Order Details]
+INNER JOIN dbo.Products
+  ON [Order Details].ProductID = Products.ProductID
+  where productName LIKE @prod
+  group by Products.ProductName
+
+  end
+
+  exec SP_GanPro 'Chang'
