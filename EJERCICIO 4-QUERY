@@ -1,0 +1,100 @@
+--QUERY PARA HACER LA BUSQUEDA POR PROCEDIMIENTOS ALMACENADOS (al ejecutar no trae ningún resultado)
+CREATE PROCEDURE SP_GanTerr
+@ter as nvarchar(20)
+as
+begin
+
+
+SELECT
+Territories.TerritoryDescription
+,SUM ((UnitPrice -Discount ) *Quantity ) AS SUBTOTAL
+,
+(SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE @ter)AS FLETE
+  ,
+
+  SUM ((UnitPrice -Discount ) *Quantity ) + (SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE @ter) AS TOTALVENTAS
+
+FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE @ter
+GROUP BY  Territories.TerritoryDescription
+
+ORDER BY Territories.TerritoryDescription
+
+end
+
+
+
+
+exec SP_GanTerr 'ATLANTA'
+
+
+
+--QUERY PARA HACER LA BUSQUEDA MANUALMENTE
+SELECT
+Territories.TerritoryDescription
+,SUM ((UnitPrice -Discount ) *Quantity ) AS SUBTOTAL
+,
+(SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE '%ATLANTA%')AS FLETE
+  ,
+
+  SUM ((UnitPrice -Discount ) *Quantity ) + (SELECT(SUM(Freight))AS FLETE FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE '%ATLANTA%') AS TOTALVENTAS
+
+FROM dbo.[Order Details]
+INNER JOIN dbo.Orders
+  ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN dbo.Employees
+  ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.EmployeeTerritories
+  ON EmployeeTerritories.EmployeeID = Employees.EmployeeID
+INNER JOIN dbo.Territories
+  ON EmployeeTerritories.TerritoryID = Territories.TerritoryID
+  WHERE Territories.TerritoryDescription LIKE '%ATLANTA%'
+GROUP BY  Territories.TerritoryDescription
+
+ORDER BY Territories.TerritoryDescription
+
+
