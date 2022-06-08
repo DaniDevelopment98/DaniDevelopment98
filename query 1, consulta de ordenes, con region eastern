@@ -1,8 +1,8 @@
+
+
 SELECT
-  Employees.EmployeeID
- ,Orders.OrderID
- ,Orders.EmployeeID
- ,Orders.OrderDate
+  Orders.OrderID,
+  Orders.OrderDate
  ,Orders.RequiredDate
  ,Orders.ShipVia
  ,Orders.Freight
@@ -30,3 +30,16 @@ INNER JOIN dbo.Categories
   ON Products.CategoryID = Categories.CategoryID
 WHERE Region.RegionID = 1
 AND Products.CategoryID = 8
+GROUP BY 
+Orders.OrderID
+ ,Orders.OrderDate
+ ,Orders.RequiredDate
+ ,Orders.ShipVia
+ ,Orders.Freight
+ ,Orders.ShipName
+ ,Orders.ShipAddress
+ ,Orders.ShipCity
+ ,Orders.ShipRegion
+ ,Orders.ShipPostalCode
+ ,Region.RegionDescription
+ ,Categories.CategoryName
