@@ -1,3 +1,11 @@
 De que forma puedo usar correctamente los índices en SQL
 Como funciona realmente el trasaction-Log, y como puede afectar a mi base de datos
 Como puedo definir correctamente un evento Prebuild y el PostBuild
+Cual es la diferencia significativa entre un debug x86 y x64, junto con el relase x86 y x64.
+¿Se pueden alterar valores de estructura con el debug y relase?
+De que manera puedo usar incorrectamente el anonymus type?
+Como me ayuda una reflexion a la hora de estar programanado o desarrollando un proyecto
+Bajo que casos debo de usar correctamente los NUllable Types
+De que forma vamos a manejar json?
+En proyectos grandes, como se deben declarar correctamente los Atributos?
+Como hace la diferencia entre implementar o no los atributos
